@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:romanov_daniil_kiuki_21_7/models/department.dart';
 
 class Student {
   final String firstName;
   final String lastName;
-  final Department department;
+  final DepartmentModel department;
   final int grade;
   final Gender gender;
 
@@ -16,12 +16,4 @@ class Student {
   });
 }
 
-enum Department { finance, law, it, medical }
 enum Gender { male, female }
-
-const Map<Department, IconData> departmentIcons = {
-  Department.finance: Icons.attach_money,
-  Department.law: Icons.gavel,
-  Department.it: Icons.computer,
-  Department.medical: Icons.local_hospital,
-};
