@@ -10,7 +10,11 @@ class DepartmentsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final students = ref.watch(studentsProvider);
+    final state = ref.watch(studentsProvider);
+
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -28,7 +32,7 @@ class DepartmentsScreen extends ConsumerWidget {
         itemCount: departments.length,
         itemBuilder: (context, index) {
           final department = departments[index];
-          final studentCount = students
+          final studentCount = state.studentsList
               .where((student) => student.department.id == department.id)
               .length;
 

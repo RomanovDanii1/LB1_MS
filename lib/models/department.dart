@@ -4,13 +4,13 @@ class DepartmentModel {
   final String id;
   final String name;
   final IconData icon;
-  final Color color;
+  final Color color; 
 
   const DepartmentModel({
     required this.id,
     required this.name,
     required this.icon,
-    required this.color,
+    required this.color, 
   });
 }
 
@@ -19,7 +19,7 @@ const List<DepartmentModel> departments = [
     id: 'finance',
     name: 'Finance',
     icon: Icons.attach_money,
-    color: Colors.green,
+    color: Colors.green, 
   ),
   DepartmentModel(
     id: 'law',

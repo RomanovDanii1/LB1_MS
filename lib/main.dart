@@ -1,82 +1,94 @@
 import 'package:flutter/material.dart';
-import 'package:romanov_daniil_kiuki_21_7/models/student.dart';
-import 'package:romanov_daniil_kiuki_21_7/widgets/students.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'screens/departments_screen.dart';
+import 'screens/students_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  List<Student> studentsList = [
-    const Student(
-      firstName: 'Олександра',
-      lastName: 'Шевченко',
-      department: Department.finance,
-      grade: 5,
-      gender: Gender.female,
-    ),
-    const Student(
-      firstName: 'Максим',
-      lastName: 'Коваль',
-      department: Department.it,
-      grade: 4,
-      gender: Gender.male,
-    ),
-    const Student(
-      firstName: 'Софія',
-      lastName: 'Бондар',
-      department: Department.law,
-      grade: 3,
-      gender: Gender.female,
-    ),
-    const Student(
-      firstName: 'Андрій',
-      lastName: 'Демченко',
-      department: Department.medical,
-      grade: 5,
-      gender: Gender.male,
-    ),
-    const Student(
-      firstName: 'Аліна',
-      lastName: 'Захарова',
-      department: Department.finance,
-      grade: 4,
-      gender: Gender.female,
-    ),
-    const Student(
-      firstName: 'Дмитро',
-      lastName: 'Мельник',
-      department: Department.it,
-      grade: 2,
-      gender: Gender.male,
-    ),
-    const Student(
-      firstName: 'Єва',
-      lastName: 'Кравченко',
-      department: Department.law,
-      grade: 5,
-      gender: Gender.female,
-    ),
-    const Student(
-      firstName: 'Богдан',
-      lastName: 'Мороз',
-      department: Department.medical,
-      grade: 3,
-      gender: Gender.male,
-    ),
-    const Student(
-      firstName: 'Марія',
-      lastName: 'Литвин',
-      department: Department.finance,
-      grade: 4,
-      gender: Gender.female,
-    ),
-    const Student(
-      firstName: 'Лука',
-      lastName: 'Ярошенко',
-      department: Department.it,
-      grade: 5,
-      gender: Gender.male,
-    ),
+  runApp(const ProviderScope(child: MyApp()));
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'University',
+      theme: ThemeData(
+        primarySwatch: Colors.teal,
+        textTheme: GoogleFonts.latoTextTheme(
+          Theme.of(context).textTheme.copyWith(
+                titleLarge: GoogleFonts.lato(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                bodyMedium: GoogleFonts.lato(
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+                bodySmall: GoogleFonts.lato(
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
+              ),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.teal,
+          elevation: 4,
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Colors.teal,
+          foregroundColor: Colors.white,
+        ),
+      ),
+      home: const TabsScreen(),
+    );
+  }
+}
+
+class TabsScreen extends StatefulWidget {
+  const TabsScreen({super.key});
+
+  @override
+  State<TabsScreen> createState() => _TabsScreenState();
+}
+
+class _TabsScreenState extends State<TabsScreen> {
+  int _selectedIndex = 0;
+
+  final _pages = [
+    const DepartmentsScreen(),
+    const StudentsScreen(),
   ];
 
-  runApp(MaterialApp(
-    home: StudentsScreen(students: studentsList),
-  ));
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_selectedIndex == 0 ? 'Departments' : 'Students'),
+      ),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) => setState(() => _selectedIndex = index),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school),
+            label: 'Departments',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'Students',
+          ),
+        ],
+      ),
+    );
+  }
 }

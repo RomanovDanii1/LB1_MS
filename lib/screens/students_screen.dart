@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/student.dart';
 import '../providers/students_provider.dart';
 import '../widgets/new_student_form.dart';
 import '../widgets/student_item.dart';
@@ -9,21 +8,12 @@ class StudentsScreen extends ConsumerWidget {
   const StudentsScreen({super.key});
 
   void _addOrEditStudent(BuildContext context, WidgetRef ref,
-      {Student? student, int? index}) {
+      {int? index}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (_) {
-        return NewStudent(
-          student: student,
-          onSave: (newStudent) {
-            if (student != null && index != null) {
-              ref.read(studentsProvider.notifier).editStudent(newStudent, index);
-            } else {
-              ref.read(studentsProvider.notifier).addStudent(newStudent);
-            }
-          },
-        );
+        return NewStudent(studentIndex: index,);
       },
     );
   }
@@ -46,22 +36,44 @@ class StudentsScreen extends ConsumerWidget {
         ),
         duration: const Duration(seconds: 5),
       ),
-    );
+    ).closed.then((value) {
+      if (value != SnackBarClosedReason.action) {
+        ref.read(studentsProvider.notifier).deleteFromServer();
+      }
+    });
+
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final students = ref.watch(studentsProvider);
+    final state = ref.watch(studentsProvider);
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (state.msg != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              state.msg!,
+              style: const TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
+
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Students'),
         centerTitle: true,
       ),
       body: ListView.builder(
-        itemCount: students.length,
+        itemCount: state.studentsList.length,
         itemBuilder: (context, index) {
-          final student = students[index];
+          final student = state.studentsList[index];
           return Dismissible(
             key: ValueKey(student),
             background: Container(
@@ -74,7 +86,7 @@ class StudentsScreen extends ConsumerWidget {
             onDismissed: (_) => _deleteStudent(context, ref, index),
             child: InkWell(
               onTap: () =>
-                  _addOrEditStudent(context, ref, student: student, index: index),
+                  _addOrEditStudent(context, ref, index: index),
               child: StudentItem(student: student),
             ),
           );
